@@ -955,16 +955,13 @@ async function main() {
 
       if (totalIncomplete > 0) {
         const itemType = taskCount > 0 ? "Tasks" : "todos";
-        reason += ` ${totalIncomplete} incomplete ${itemType} remain. Continue working.`;
+        reason += ` ${totalIncomplete} incomplete ${itemType} remain. Continue working. When all tasks are done, run /oh-my-claudecode:cancel to exit.`;
       } else if (newCount >= 5) {
         // Strong directive: LLM must call cancel NOW
         reason += ` No incomplete tasks detected. You MUST invoke /oh-my-claudecode:cancel immediately to exit ultrawork mode and clean up state files. Call state_clear(mode="ultrawork") if the cancel skill is unavailable.`;
-      } else if (newCount >= 3) {
-        // Suggest cancel after minimum iterations
-        reason += ` If all work is complete, run /oh-my-claudecode:cancel to cleanly exit ultrawork mode and clean up state files. If cancel fails, retry with /oh-my-claudecode:cancel --force. Otherwise, continue working.`;
       } else {
-        // Early iterations with no tasks yet - just tell LLM to continue
-        reason += ` Continue working - create Tasks to track your progress.`;
+        // No incomplete tasks at any reinforcement count: always mention cancel
+        reason += ` Continue working on pending tasks, or if all work is complete, run /oh-my-claudecode:cancel to cleanly exit ultrawork mode. If cancel fails, retry with /oh-my-claudecode:cancel --force.`;
       }
 
       if (ultrawork.state.original_prompt) {
